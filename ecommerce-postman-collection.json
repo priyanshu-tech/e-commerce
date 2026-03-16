@@ -1,0 +1,477 @@
+{
+  "info": {
+    "name": "Ecommerce Service",
+    "description": "Postman collection for all controllers in the ecommerce-service Spring Boot app (localhost:8080)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",     "value": "http://localhost:8080" },
+    { "key": "username",    "value": "johndoe" },
+    { "key": "email",       "value": "john.doe@example.com" },
+    { "key": "cartItemId",  "value": "1" },
+    { "key": "orderId",     "value": "1" },
+    { "key": "paymentId",   "value": "1" },
+    { "key": "productId",   "value": "1" },
+    { "key": "inventoryId", "value": "1" },
+    { "key": "sku",         "value": "SKU-001" }
+  ],
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john.doe@example.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phoneNumber\": \"+1234567890\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/update?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "update"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"phoneNumber\": \"+1987654321\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User Addresses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/addresses?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "addresses"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/addresses?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "addresses"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john.doe@example.com\",\n  \"addressLine1\": \"123 Main St\",\n  \"addressLine2\": \"Apt 4B\",\n  \"city\": \"New York\",\n  \"state\": \"NY\",\n  \"zipCode\": \"10001\",\n  \"country\": \"US\",\n  \"addressType\": \"SHIPPING\",\n  \"isDefault\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products?category=electronics&search=phone&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "category", "value": "electronics" },
+                { "key": "search",   "value": "phone" },
+                { "key": "page",     "value": "0" },
+                { "key": "size",     "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartphone X\",\n  \"description\": \"Latest flagship smartphone\",\n  \"sku\": \"SKU-001\",\n  \"price\": 999.99,\n  \"discountPrice\": 899.99,\n  \"brand\": \"TechBrand\",\n  \"category\": \"electronics\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "{{productId}}", "update"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartphone X Pro\",\n  \"description\": \"Updated flagship smartphone\",\n  \"sku\": \"SKU-001\",\n  \"price\": 1099.99,\n  \"discountPrice\": 999.99,\n  \"brand\": \"TechBrand\",\n  \"category\": \"electronics\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "{{productId}}", "delete"]
+            }
+          }
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "categories"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Get Inventory By Product ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/product/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "product", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Inventory By SKU",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/sku/{{sku}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "sku", "{{sku}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Inventory",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/{{inventoryId}}/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "{{inventoryId}}", "update"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"sku\": \"SKU-001\",\n  \"availableQuantity\": 100,\n  \"reservedQuantity\": 10,\n  \"warehouseLocation\": \"WH-A1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reserve Inventory",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/{{inventoryId}}/reserve?quantity=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "{{inventoryId}}", "reserve"],
+              "query": [{ "key": "quantity", "value": "5" }]
+            }
+          }
+        },
+        {
+          "name": "Release Inventory",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/{{inventoryId}}/release?quantity=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "{{inventoryId}}", "release"],
+              "query": [{ "key": "quantity", "value": "5" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Item To Cart",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "items"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"productName\": \"Smartphone X\",\n  \"sku\": \"SKU-001\",\n  \"quantity\": 2,\n  \"unitPrice\": 999.99,\n  \"inStock\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Cart Item",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items/{{cartItemId}}?username={{username}}&email={{email}}&quantity=3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "items", "{{cartItemId}}"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" },
+                { "key": "quantity", "value": "3" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Remove Item From Cart",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items/{{cartItemId}}/remove?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "items", "{{cartItemId}}", "remove"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/clear?username={{username}}&email={{email}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "clear"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john.doe@example.com\",\n  \"subtotal\": 999.99,\n  \"tax\": 89.99,\n  \"shippingCost\": 9.99,\n  \"totalAmount\": 1099.97,\n  \"orderStatus\": \"PENDING\",\n  \"paymentStatus\": \"PENDING\",\n  \"shippingAddress\": {\n    \"addressLine1\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"US\",\n    \"addressType\": \"SHIPPING\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Order By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "{{orderId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get User Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/user?username={{username}}&email={{email}}&page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "user"],
+              "query": [
+                { "key": "username", "value": "{{username}}" },
+                { "key": "email",    "value": "{{email}}" },
+                { "key": "page",     "value": "0" },
+                { "key": "size",     "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}/status?status=CONFIRMED",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "{{orderId}}", "status"],
+              "query": [{ "key": "status", "value": "CONFIRMED" }]
+            }
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "{{orderId}}", "cancel"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment",
+      "item": [
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": 1,\n  \"paymentMethod\": \"CREDIT_CARD\",\n  \"amount\": 1099.97,\n  \"currency\": \"USD\",\n  \"transactionId\": \"TXN-123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Payment By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments", "{{paymentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Payment By Order ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/order/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments", "order", "{{orderId}}"]
+            }
+          }
+        },
+        {
+          "name": "Refund Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/{{paymentId}}/refund",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payments", "{{paymentId}}", "refund"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
