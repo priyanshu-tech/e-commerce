@@ -9,11 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-/**
- * Product Controller
- * Handles product catalog and category operations
- */
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -47,10 +44,16 @@ public class ProductController {
         return productService.updateProduct(productId, productVO);
     }
 
-    @PostMapping("/{productId}/delete")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable Long productId) {
-        productService.deleteProduct(productId);
+    @PostMapping("/{productId}/toggle-status")
+    public Map<String, String> toggleStatus(@PathVariable Long productId) {
+        return productService.toggleStatus(productId);
+    }
+
+    @PostMapping("/{productId}/rating")
+    public ProductVO updateRating(@PathVariable Long productId,
+                                  @RequestParam Double rating,
+                                  @RequestParam Integer reviewCount) {
+        return productService.updateRating(productId, rating, reviewCount);
     }
 
     @GetMapping("/categories")

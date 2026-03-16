@@ -5,11 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CategoryVO {
-    private Long categoryId;
-    private String name;
-    private String description;
-    private Long parentCategoryId;
+public class ProductImageVO {
+    private Long imageId;
+    private Long productId;
     private String imageUrl;
     private Integer displayOrder;
+    private Boolean isPrimary;
 }
