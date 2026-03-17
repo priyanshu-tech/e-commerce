@@ -1,20 +1,21 @@
 package com.example.demo.service;
 
+import com.example.demo.vo.inventory.InventoryReservationVO;
 import com.example.demo.vo.inventory.InventoryVO;
 
-/**
- * Inventory Service Interface
- * Handles inventory and stock management business logic
- */
 public interface InventoryService {
 
     InventoryVO getInventoryByProductId(Long productId);
 
     InventoryVO getInventoryBySku(String sku);
 
-    InventoryVO updateInventory(Long inventoryId, InventoryVO inventoryVO);
+    InventoryVO createInventory(InventoryVO inventoryVO);
 
-    InventoryVO reserveInventory(Long inventoryId, Integer quantity);
+    InventoryVO restock(Long inventoryId, Integer quantity);
 
-    InventoryVO releaseInventory(Long inventoryId, Integer quantity);
+    InventoryReservationVO reserve(Long inventoryId, Long orderId, Integer quantity);
+
+    InventoryVO release(Long orderId, Long inventoryId);
+
+    InventoryVO confirm(Long orderId, Long inventoryId);
 }

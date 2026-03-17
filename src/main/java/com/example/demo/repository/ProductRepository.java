@@ -15,6 +15,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsBySku(String sku);
 
+    Optional<Product> findBySku(String sku);
+
     Optional<Product> findByProductIdAndStatus(Long productId, String status);
 
     @Query("SELECT p FROM Product p WHERE p.status = 'ACTIVE' " +
