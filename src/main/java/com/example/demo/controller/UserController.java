@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * User Controller
- * Handles user profile and address management
- */
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -38,14 +34,14 @@ public class UserController {
         return userService.updateUser(username, email, userVO);
     }
 
-    @GetMapping("/addresses")
-    public List<AddressVO> getUserAddresses(@RequestParam String username, @RequestParam String email) {
-        return userService.getUserAddresses(username, email);
+    @GetMapping("/{userId}/addresses")
+    public List<AddressVO> getUserAddresses(@PathVariable Long userId) {
+        return userService.getUserAddresses(userId);
     }
 
-    @PostMapping("/addresses")
+    @PostMapping("/{userId}/addresses")
     @ResponseStatus(HttpStatus.CREATED)
-    public AddressVO addAddress(@RequestParam String username, @RequestParam String email, @RequestBody AddressVO addressVO) {
-        return userService.addAddress(username, email, addressVO);
+    public AddressVO addAddress(@PathVariable Long userId, @RequestBody AddressVO addressVO) {
+        return userService.addAddress(userId, addressVO);
     }
 }

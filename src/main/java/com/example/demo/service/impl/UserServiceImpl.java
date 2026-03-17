@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Address;
 import com.example.demo.entity.User;
 import com.example.demo.exception.DuplicateResourceException;
-import com.example.demo.exception.ExceptionUtils;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.UserRepository;
@@ -25,10 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private final UserRepository userRepository;
-    @Autowired
-    private final AddressRepository addressRepository;
+    @Autowired private final UserRepository userRepository;
+    @Autowired private final AddressRepository addressRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -45,8 +42,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserVO createUser(UserVO userVO) {
         LogUtils.info(log, "Creating user", userVO);
-        if (userRepository.existsByUsernameAndEmail(userVO.getUsername(), userVO.getEmail())) {
-            throw new DuplicateResourceException("User already exists with username: " + userVO.getUsername() + " and email: " + userVO.getEmail());
+        if (userRepository.existsByUsername(userVO.getUsername())) {
+            throw new DuplicateResourceException("Username already exists: " + userVO.getUsername());
         }
         if (userRepository.existsByEmail(userVO.getEmail())) {
             throw new DuplicateResourceException("Email already exists: " + userVO.getEmail());
@@ -62,7 +59,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserVO updateUser(String username, String email, UserVO userVO) {
         log.info("Updating user - username: {}, email: {}", username, email);
-        LogUtils.info(log, "Update payload", userVO);
         User existingUser = userRepository.findByUsernameAndEmail(username, email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username + " and email: " + email));
         existingUser.setFirstName(userVO.getFirstName());
@@ -77,37 +73,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AddressVO> getUserAddresses(String username, String email) {
-        log.info("Getting addresses - username: {}, email: {}", username, email);
-        if (!userRepository.existsByUsernameAndEmail(username, email)) {
-            throw new ResourceNotFoundException("User not found with username: " + username + " and email: " + email);
+    public List<AddressVO> getUserAddresses(Long userId) {
+        log.info("Getting addresses for userId: {}", userId);
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with userId: " + userId);
         }
-        List<Address> addresses = addressRepository.findByUsernameAndEmail(username, email);
-        List<AddressVO> result = addresses.stream()
-                .map(UserMapper::toAddressVO)
-                .collect(Collectors.toList());
+        List<Address> addresses = addressRepository.findByUserId(userId);
+        List<AddressVO> result = addresses.stream().map(UserMapper::toAddressVO).collect(Collectors.toList());
         LogUtils.info(log, "Fetched addresses", result);
         return result;
     }
 
     @Override
     @Transactional
-    public AddressVO addAddress(String username, String email, AddressVO addressVO) {
-        log.info("Adding address - username: {}, email: {}", username, email);
-        if (!userRepository.existsByUsernameAndEmail(username, email)) {
-            throw new ResourceNotFoundException("User not found with username: " + username + " and email: " + email);
+    public AddressVO addAddress(Long userId, AddressVO addressVO) {
+        log.info("Adding address for userId: {}", userId);
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with userId: " + userId);
         }
         if (Boolean.TRUE.equals(addressVO.getIsDefault())) {
-            addressRepository.findByUsernameAndEmailAndIsDefaultTrue(username, email)
-                    .ifPresent(existingDefault -> {
-                        existingDefault.setIsDefault(false);
-                        addressRepository.save(existingDefault);
+            addressRepository.findByUserIdAndIsDefaultTrue(userId)
+                    .ifPresent(existing -> {
+                        existing.setIsDefault(false);
+                        addressRepository.save(existing);
                     });
         }
+        addressVO.setUserId(userId);
         Address address = UserMapper.toAddressEntity(addressVO);
-        LogUtils.info(log, "Inserting address", addressVO);
-        Address savedAddress = addressRepository.save(address);
-        AddressVO result = UserMapper.toAddressVO(savedAddress);
+        Address saved = addressRepository.save(address);
+        AddressVO result = UserMapper.toAddressVO(saved);
         LogUtils.info(log, "Address added successfully", result);
         return result;
     }

@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USERS", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"USERNAME", "EMAIL"})
+        @UniqueConstraint(columnNames = {"USERNAME"}),
+        @UniqueConstraint(columnNames = {"EMAIL"})
 })
-@IdClass(UserId.class)
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,11 +20,14 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
+    @SequenceGenerator(name = "users_seq", sequenceName = "USERS_SEQ", allocationSize = 1)
+    private Long userId;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Id
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)

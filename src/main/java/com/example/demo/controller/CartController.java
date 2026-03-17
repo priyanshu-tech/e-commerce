@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * Cart Controller
  * Handles shopping cart operations
@@ -45,8 +47,7 @@ public class CartController {
     }
 
     @PostMapping("/{userId}/clear")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void clearCart(@PathVariable Long userId) {
-        cartService.clearCart(userId);
+    public Map<String, String> clearCart(@PathVariable Long userId) {
+        return cartService.clearCart(userId);
     }
 }

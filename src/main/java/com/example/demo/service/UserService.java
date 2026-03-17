@@ -5,10 +5,6 @@ import com.example.demo.vo.user.UserVO;
 
 import java.util.List;
 
-/**
- * User Service Interface
- * Handles user profile and address business logic
- */
 public interface UserService {
 
     UserVO getUser(String username, String email);
@@ -17,7 +13,7 @@ public interface UserService {
 
     UserVO updateUser(String username, String email, UserVO userVO);
 
-    List<AddressVO> getUserAddresses(String username, String email);
+    List<AddressVO> getUserAddresses(Long userId);
 
-    AddressVO addAddress(String username, String email, AddressVO addressVO);
+    AddressVO addAddress(Long userId, AddressVO addressVO);
 }

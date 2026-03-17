@@ -20,10 +20,7 @@ public class Address {
     private Long addressId;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private String email;
+    private Long userId;
 
     @Column(nullable = false)
     private String addressLine1;
@@ -47,13 +44,6 @@ public class Address {
 
     @Column(nullable = false)
     private Boolean isDefault;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "username", referencedColumnName = "username", insertable = false, updatable = false),
-            @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
-    })
-    private User user;
 
     @PrePersist
     protected void onCreate() {

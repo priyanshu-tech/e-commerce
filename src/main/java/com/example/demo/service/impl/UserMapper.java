@@ -13,6 +13,7 @@ class UserMapper {
     static UserVO toVO(User user) {
         if (user == null) return null;
         UserVO result = UserVO.builder()
+                .userId(user.getUserId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
@@ -42,8 +43,7 @@ class UserMapper {
         if (address == null) return null;
         AddressVO result = AddressVO.builder()
                 .addressId(address.getAddressId())
-                .username(address.getUsername())
-                .email(address.getEmail())
+                .userId(address.getUserId())
                 .addressLine1(address.getAddressLine1())
                 .addressLine2(address.getAddressLine2())
                 .city(address.getCity())
@@ -62,8 +62,7 @@ class UserMapper {
         LogUtils.info(log, "Mapping AddressVO to entity", addressVO);
         return Address.builder()
                 .addressId(addressVO.getAddressId())
-                .username(addressVO.getUsername())
-                .email(addressVO.getEmail())
+                .userId(addressVO.getUserId())
                 .addressLine1(addressVO.getAddressLine1())
                 .addressLine2(addressVO.getAddressLine2())
                 .city(addressVO.getCity())

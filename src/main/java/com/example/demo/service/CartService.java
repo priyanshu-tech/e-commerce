@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.vo.cart.CartItemVO;
 import com.example.demo.vo.cart.CartVO;
 
+import java.util.Map;
+
 /**
  * Cart Service Interface
  * Handles shopping cart business logic
@@ -17,5 +19,5 @@ public interface CartService {
 
     CartVO removeItemFromCart(Long userId, Long cartItemId);
 
-    void clearCart(Long userId);
+    Map<String, String> clearCart(Long userId);
 }

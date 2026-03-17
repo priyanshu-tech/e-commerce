@@ -2,7 +2,7 @@
 
 ## Overview
 
-Manages user profiles and their saved addresses. The `USERS` table uses a composite primary key `(username, email)` — there is no numeric `userId`. All user endpoints identify a user via `?username=&email=` query parameters.
+Manages user profiles and their saved addresses. The `USERS` table uses a surrogate numeric `userId` as PK, auto-generated via Oracle sequence. `username` and `email` are individually unique. User lookup uses `?username=&email=` query params. Address operations use `userId` as path variable.
 
 ---
 
@@ -18,23 +18,23 @@ http://localhost:8097/api/users
 
 ### User
 
-| Field         | Type          | Notes                           |
-|---------------|---------------|---------------------------------|
-| `username`    | String        | Part of composite PK, immutable |
-| `email`       | String        | Part of composite PK, immutable |
-| `firstName`   | String        | Required                        |
-| `lastName`    | String        | Required                        |
-| `phoneNumber` | String        | Optional                        |
-| `status`      | String        | Defaults to `ACTIVE` on create  |
-| `createdAt`   | LocalDateTime | Set on insert, never updated    |
+| Field         | Type          | Notes                                          |
+|---------------|---------------|------------------------------------------------|
+| `userId`      | Long          | Surrogate PK, auto-generated via `USERS_SEQ`  |
+| `username`    | String        | Unique, immutable                              |
+| `email`       | String        | Unique, immutable                              |
+| `firstName`   | String        | Required                                       |
+| `lastName`    | String        | Required                                       |
+| `phoneNumber` | String        | Optional                                       |
+| `status`      | String        | Defaults to `ACTIVE` on create                 |
+| `createdAt`   | LocalDateTime | Set on insert, never updated                   |
 
 ### Address
 
 | Field          | Type    | Notes                                                                          |
 |----------------|---------|--------------------------------------------------------------------------------|
 | `addressId`    | Long    | Surrogate PK, auto-generated via `ADDRESSES_SEQ`. Used as join key on `ORDERS` |
-| `username`     | String  | FK → USERS                                                                     |
-| `email`        | String  | FK → USERS                                                                     |
+| `userId`       | Long    | FK → USERS                                                                     |
 | `addressLine1` | String  | Required                                                                       |
 | `addressLine2` | String  | Optional                                                                       |
 | `city`         | String  | Required                                                                       |
@@ -50,7 +50,7 @@ http://localhost:8097/api/users
 
 ### 1. Get User
 
-Fetches a user's profile by composite key.
+Fetches a user's profile by `username` and `email`.
 
 ```
 GET /api/users?username={username}&email={email}
@@ -67,6 +67,7 @@ GET /api/users?username={username}&email={email}
 
 ```json
 {
+  "userId": 1,
   "username": "raj_kumar",
   "email": "raj.kumar@example.com",
   "firstName": "Raj",
@@ -79,16 +80,16 @@ GET /api/users?username={username}&email={email}
 
 **Error Responses**
 
-| Status | Scenario                         |
-|--------|----------------------------------|
-| 404    | User not found                   |
-| 400    | Missing `username` or `email` param |
+| Status | Scenario                              |
+|--------|---------------------------------------|
+| 404    | User not found                        |
+| 400    | Missing `username` or `email` param   |
 
 ---
 
 ### 2. Create User
 
-Creates a new user. `username` + `email` must be unique. `createdAt` and `updatedAt` are set automatically via `@PrePersist`.
+Creates a new user. `username` and `email` must each be unique. `createdAt` and `updatedAt` are set automatically via `@PrePersist`.
 
 ```
 POST /api/users
@@ -111,6 +112,7 @@ POST /api/users
 
 ```json
 {
+  "userId": 1,
   "username": "raj_kumar",
   "email": "raj.kumar@example.com",
   "firstName": "Raj",
@@ -123,10 +125,10 @@ POST /api/users
 
 **Error Responses**
 
-| Status | Scenario                                     |
-|--------|----------------------------------------------|
-| 409    | `username + email` combination already exists |
-| 409    | `email` already registered with another user  |
+| Status | Scenario                                    |
+|--------|---------------------------------------------|
+| 409    | `username` already exists                   |
+| 409    | `email` already registered with another user |
 
 ---
 
@@ -171,15 +173,8 @@ POST /api/users/update?username={username}&email={email}
 Returns all saved addresses for a user.
 
 ```
-GET /api/users/addresses?username={username}&email={email}
+GET /api/users/{userId}/addresses
 ```
-
-**Query Params**
-
-| Param      | Required | Description     |
-|------------|----------|-----------------|
-| `username` | Yes      | User's username |
-| `email`    | Yes      | User's email    |
 
 **Success Response — 200 OK**
 
@@ -187,8 +182,7 @@ GET /api/users/addresses?username={username}&email={email}
 [
   {
     "addressId": 1,
-    "username": "raj_kumar",
-    "email": "raj.kumar@example.com",
+    "userId": 1,
     "addressLine1": "Flat 301, Sunrise Apartments",
     "addressLine2": "MG Road",
     "city": "Bangalore",
@@ -211,18 +205,11 @@ GET /api/users/addresses?username={username}&email={email}
 
 ### 5. Add Address
 
-Adds a new address for a user. If `isDefault: true`, any existing default address for that user is automatically unset first.
+Adds a new address for a user. If `isDefault: true`, any existing default address is automatically unset first.
 
 ```
-POST /api/users/addresses?username={username}&email={email}
+POST /api/users/{userId}/addresses
 ```
-
-**Query Params**
-
-| Param      | Required | Description     |
-|------------|----------|-----------------|
-| `username` | Yes      | User's username |
-| `email`    | Yes      | User's email    |
 
 **Request Body**
 
@@ -239,7 +226,6 @@ POST /api/users/addresses?username={username}&email={email}
 }
 ```
 
-> `username` and `email` in the body are ignored — taken from query params.  
 > `addressId` is auto-generated by `ADDRESSES_SEQ` — do not pass it in the request.
 
 **Success Response — 201 Created** — returns saved address with generated `addressId`
@@ -254,32 +240,30 @@ POST /api/users/addresses?username={username}&email={email}
 
 ## Error Response Shape
 
-All errors return a consistent structure:
-
 ```json
 {
   "status": 404,
   "error": "Not Found",
-  "message": "User not found with username: raj_kumar and email: raj.kumar@example.com",
-  "path": "/api/users",
+  "message": "User not found with userId: 99",
+  "path": "/api/users/99/addresses",
   "timestamp": "2024-01-15T10:30:00"
 }
 ```
 
-| Status | Error                  | Trigger                              |
-|--------|------------------------|--------------------------------------|
-| 400    | Missing Parameter      | Required query param absent          |
-| 400    | Validation Failed      | Request body fails `@Valid` checks   |
-| 404    | Not Found              | User or resource does not exist      |
-| 409    | Conflict               | Duplicate username/email             |
-| 500    | Internal Server Error  | Unhandled exception                  |
+| Status | Error                 | Trigger                            |
+|--------|-----------------------|------------------------------------|
+| 400    | Missing Parameter     | Required query param absent        |
+| 404    | Not Found             | User or resource does not exist    |
+| 409    | Conflict              | Duplicate username or email        |
+| 500    | Internal Server Error | Unhandled exception                |
 
 ---
 
 ## Key Design Decisions
 
-- **Composite PK on USERS**: No numeric `userId` — identity is `(username, email)`. Both fields are required on every user endpoint.
-- **`addressId` as surrogate key**: `ADDRESSES` has a numeric PK auto-generated via Oracle sequence `ADDRESSES_SEQ`. It exists purely as a join key for the `ORDERS` table (`shippingAddressId`, `billingAddressId`) — not exposed in any update/delete endpoint yet.
+- **Surrogate userId**: `USERS` table now has a numeric `userId` PK via `USERS_SEQ`. `username` and `email` remain individually unique — no data integrity loss, but FK references from `CARTS`, `ORDERS` etc. are now clean single-column joins.
+- **User lookup still by username + email**: `GET /api/users?username=&email=` — keeps the natural identity check for login-style lookups.
+- **Address endpoints use userId path variable**: `GET /api/users/{userId}/addresses` and `POST /api/users/{userId}/addresses` — cleaner than passing username + email as query params on every address call.
 - **Single default address**: Adding an address with `isDefault: true` automatically flips the previous default to `false` — no manual cleanup needed by the caller.
 - **Immutable fields**: `username`, `email`, `createdAt` are never updated. The update endpoint only applies `firstName`, `lastName`, `phoneNumber`, `status`.
 - **Single error logging point**: All exceptions propagate to `GlobalExceptionHandler` — no duplicate logs across service/mapper layers.
