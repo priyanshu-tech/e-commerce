@@ -3,20 +3,15 @@ package com.example.demo.service;
 import com.example.demo.vo.order.OrderVO;
 
 import java.util.List;
+import java.util.Map;
 
-/**
- * Order Service Interface
- * Handles order placement and management business logic
- */
 public interface OrderService {
 
-    OrderVO createOrder(OrderVO orderVO);
+    OrderVO placeOrder(Long userId, Long addressId);
 
-    OrderVO getOrderById(Long orderId);
+    OrderVO getOrderByNumber(String orderNumber);
 
     List<OrderVO> getUserOrders(Long userId, int page, int size);
 
-    OrderVO updateOrderStatus(Long orderId, String status);
-
-    void cancelOrder(Long orderId);
+    Map<String, String> cancelOrder(String orderNumber);
 }

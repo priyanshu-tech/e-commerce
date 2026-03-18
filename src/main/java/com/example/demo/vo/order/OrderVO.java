@@ -1,6 +1,5 @@
 package com.example.demo.vo.order;
 
-import com.example.demo.vo.user.AddressVO;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,10 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Order Value Object
- * Represents customer order information
- */
 @Data
 @Builder
 public class OrderVO {
@@ -19,14 +14,15 @@ public class OrderVO {
     private String orderNumber;
     private Long userId;
     private List<OrderItemVO> items;
-    private BigDecimal subtotal;
-    private BigDecimal tax;
-    private BigDecimal shippingCost;
     private BigDecimal totalAmount;
     private String orderStatus;
-    private String paymentStatus;
-    private AddressVO shippingAddress;
-    private AddressVO billingAddress;
     private LocalDateTime orderDate;
-    private LocalDateTime estimatedDeliveryDate;
+
+    // Address snapshot
+    private String shippingAddressLine1;
+    private String shippingAddressLine2;
+    private String shippingCity;
+    private String shippingState;
+    private String shippingZipCode;
+    private String shippingCountry;
 }
