@@ -3,23 +3,18 @@ package com.example.demo.vo.payment;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Payment Value Object
- * Represents payment transaction information
- */
 @Data
 @Builder
 public class PaymentVO {
     private Long paymentId;
     private Long orderId;
-    private String paymentMethod;
-    private BigDecimal amount;
+    private String orderNumber;
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+    private Long amount;          // in paise (INR × 100)
     private String currency;
-    private String status;
-    private String transactionId;
-    private String gatewayResponse;
+    private String status;        // PENDING | SUCCESS | FAILED | REFUNDED
     private LocalDateTime paymentDate;
 }

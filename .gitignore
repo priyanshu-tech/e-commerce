@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### macOS ###
+.DS_Store
+
 ### Sensitive config ###
 src/main/resources/application.yaml
 src/main/resources/application.properties

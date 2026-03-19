@@ -2,17 +2,15 @@ package com.example.demo.service;
 
 import com.example.demo.vo.payment.PaymentVO;
 
-/**
- * Payment Service Interface
- * Handles payment processing and transaction business logic
- */
+import java.util.Map;
+
 public interface PaymentService {
 
-    PaymentVO processPayment(PaymentVO paymentVO);
+    PaymentVO createOrder(String orderNumber, String currency);
 
-    PaymentVO getPaymentById(Long paymentId);
+    PaymentVO verifyPayment(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature);
 
-    PaymentVO getPaymentByOrderId(Long orderId);
+    PaymentVO getPaymentByOrderNumber(String orderNumber);
 
-    PaymentVO refundPayment(Long paymentId);
+    Map<String, String> refundPayment(String orderNumber);
 }

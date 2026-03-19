@@ -3,40 +3,39 @@ package com.example.demo.controller;
 import com.example.demo.service.PaymentService;
 import com.example.demo.vo.payment.PaymentVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Payment Controller
- * Handles payment processing and transactions
- */
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
-    @Autowired
     private final PaymentService paymentService;
 
-    @PostMapping
+    @PostMapping("/create-order")
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentVO processPayment(@RequestBody PaymentVO paymentVO) {
-        return paymentService.processPayment(paymentVO);
+    public PaymentVO createOrder(@RequestParam String orderNumber,
+                                 @RequestParam(defaultValue = "INR") String currency) {
+        return paymentService.createOrder(orderNumber, currency);
     }
 
-    @GetMapping("/{paymentId}")
-    public PaymentVO getPaymentById(@PathVariable Long paymentId) {
-        return paymentService.getPaymentById(paymentId);
+    @PostMapping("/verify")
+    public PaymentVO verifyPayment(@RequestParam String razorpayOrderId,
+                                   @RequestParam String razorpayPaymentId,
+                                   @RequestParam String razorpaySignature) {
+        return paymentService.verifyPayment(razorpayOrderId, razorpayPaymentId, razorpaySignature);
     }
 
-    @GetMapping("/order/{orderId}")
-    public PaymentVO getPaymentByOrderId(@PathVariable Long orderId) {
-        return paymentService.getPaymentByOrderId(orderId);
+    @GetMapping("/{orderNumber}")
+    public PaymentVO getPayment(@PathVariable String orderNumber) {
+        return paymentService.getPaymentByOrderNumber(orderNumber);
     }
 
-    @PostMapping("/{paymentId}/refund")
-    public PaymentVO refundPayment(@PathVariable Long paymentId) {
-        return paymentService.refundPayment(paymentId);
+    @PostMapping("/{orderNumber}/refund")
+    public Map<String, String> refundPayment(@PathVariable String orderNumber) {
+        return paymentService.refundPayment(orderNumber);
     }
 }
